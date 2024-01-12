@@ -1,0 +1,25 @@
+{
+  "name": "learning-grpc",
+  "version": "0.0.1",
+  "description": "Trying out gRPC",
+  "main": "index.js",
+  "scripts": {
+    "pb:generate": "proto-loader-gen-types --longs=String --enums=String --defaults --keepCase --oneofs --grpcLib=@grpc/grpc-js --outDir=pb/ proto/*.proto"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.9.13",
+    "@grpc/proto-loader": "^0.7.10",
+    "@protobuf-ts/runtime": "^2.9.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "grpc-web": "^1.5.0",
+    "protobufjs": "^7.2.5"
+  },
+  "devDependencies": {
+    "@protobuf-ts/plugin": "^2.9.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
