@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package chat;
+
+message ChatRequest {
+    string message = 1;
+}
+
+message ChatResponse {
+    string username = 1;
+    string message = 2;
+}

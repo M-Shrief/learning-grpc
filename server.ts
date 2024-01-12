@@ -2,20 +2,20 @@ import path from 'path'
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 // Interfaces
-import {ProtoGrpcType} from './pb/ping'
-import { PingRequest__Output } from './pb/ping/PingRequest'
-import { PongResponse } from './pb/ping/PongResponse'
+import {ProtoGrpcType} from './pb/learning'
+import { ChatRequest, ChatRequest__Output } from './pb/learning/ChatRequest'
+import { ChatResponse } from './pb/learning/ChatResponse'
+import { PingRequest__Output } from './pb/learning/PingRequest'
+import { PongResponse } from './pb/learning/PongResponse'
+
+const PROTO_FILE = './proto/learning.proto'
+const packageDefinition = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
+const gRpcObj = (grpc.loadPackageDefinition(packageDefinition) as unknown) as ProtoGrpcType
+const learning  = gRpcObj.learning
 
 const PORT = 8080
-const PROTO_FILE = './proto/ping.proto'
-
-const packageDefinition = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
-const gRPCObj = (grpc.loadPackageDefinition(packageDefinition) as unknown) as ProtoGrpcType
-const ping  = gRPCObj.ping
-
-
 function main() {
-    const server = initServer()
+    const server = newServer()
 
     server.bindAsync(
         `0.0.0.0:${PORT}`,
@@ -31,18 +31,60 @@ function main() {
         )
 }
 
-function initServer() {
+const callObjByUserName = new Map<string, grpc.ServerDuplexStream<ChatRequest, ChatResponse>>()
+
+function newServer() {
     const server = new grpc.Server();
 
-    server.addService(ping.Ping.service, {
+    server.addService(learning.Learning.service, {
         PingPong: (
             req: grpc.ServerUnaryCall<PingRequest__Output, PongResponse>,
             res: grpc.sendUnaryData<PongResponse>
         ) => {
             console.log(req.request);
             res(null, {message: "Pong"})
+        },
+        Chat: (call: grpc.ServerDuplexStream<ChatRequest__Output, ChatResponse>) => {
+            call.on(
+                "data",
+                (req) => {
+                    const username = call.metadata.get('username')[0] as string
+                    const message = req.message
+                    console.log(`${username}: ${message}`);
+                    for (let [user, userCall] of callObjByUserName) {
+                        if(username !== user) {
+                            userCall.write({
+                                username,
+                                message
+                            })
+                        }
+                    }
+                    if(callObjByUserName.get(username) === undefined){
+                        callObjByUserName.set(username,call)
+                    }
+                }
+            );
+
+            call.on('end', () => {
+                const username = call.metadata.get('username')[0] as string;
+                callObjByUserName.delete(username);
+                for (let [user, userCall] of callObjByUserName) {
+                    if(username !== user) {
+                        userCall.write({
+                            username,
+                            message: "Left the chat"
+                        })
+                    }
+                }
+                call.write({
+                    username: "Server",
+                    message: "See you later"
+                })
+                call.end()
+            })
         }
     })
+
 
     return server;
 }
