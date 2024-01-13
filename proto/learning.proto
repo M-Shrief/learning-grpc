@@ -5,8 +5,6 @@ package learning;
 import "ping.proto";
 import "chat.proto";
 
-
-
 service Learning {
     rpc PingPong(PingRequest) returns (PongResponse) {};
     rpc Chat(stream ChatRequest) returns (stream ChatResponse) {};

@@ -3,10 +3,10 @@ import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 // Interfaces
 import {ProtoGrpcType} from './pb/learning'
-import { ChatRequest, ChatRequest__Output } from './pb/learning/ChatRequest'
-import { ChatResponse } from './pb/learning/ChatResponse'
-import { PingRequest__Output } from './pb/learning/PingRequest'
-import { PongResponse } from './pb/learning/PongResponse'
+import { ChatRequest, ChatRequest__Output } from './pb/chat/ChatRequest'
+import { ChatResponse } from './pb/chat/ChatResponse'
+import { PingRequest__Output } from './pb/ping/PingRequest'
+import { PongResponse } from './pb/ping/PongResponse'
 
 const PROTO_FILE = './proto/learning.proto'
 const packageDefinition = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
