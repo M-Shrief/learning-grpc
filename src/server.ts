@@ -8,7 +8,7 @@ import { ChatResponse } from './pb/chat/ChatResponse'
 import { PingRequest__Output } from './pb/ping/PingRequest'
 import { PongResponse } from './pb/ping/PongResponse'
 
-const PROTO_FILE = './proto/learning.proto'
+const PROTO_FILE = '../proto/learning.proto'
 const packageDefinition = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
 const gRpcObj = (grpc.loadPackageDefinition(packageDefinition) as unknown) as ProtoGrpcType
 const learning  = gRpcObj.learning

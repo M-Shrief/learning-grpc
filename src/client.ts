@@ -6,7 +6,7 @@ import * as protoLoader from '@grpc/proto-loader'
 import {ProtoGrpcType} from './pb/learning'
 
 const PORT = 8080
-const PROTO_FILE = './proto/learning.proto'
+const PROTO_FILE = '../proto/learning.proto'
 
 const packageDefinition = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
 const gRPCObj = (grpc.loadPackageDefinition(packageDefinition) as unknown) as ProtoGrpcType

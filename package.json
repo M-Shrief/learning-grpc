@@ -4,7 +4,7 @@
   "description": "Trying out gRPC",
   "main": "index.js",
   "scripts": {
-    "pb:generate": "rm -rf pb && proto-loader-gen-types --longs=String --enums=String --defaults --keepCase --oneofs --grpcLib=@grpc/grpc-js --outDir=pb/ proto/*.proto",
+    "pb:generate": "rm -rf src/pb && proto-loader-gen-types --longs=String --enums=String --defaults --keepCase --oneofs --grpcLib=@grpc/grpc-js --outDir=src/pb/ proto/*.proto",
     "start:server": "ts-node server.ts",
     "start:client": "ts-node client.ts"
   },
