@@ -9,6 +9,8 @@ import { PingRequest__Output } from './pb/ping/PingRequest'
 import { PongResponse } from './pb/ping/PongResponse'
 import { ComputeAverageRequest__Output } from './pb/calculator/ComputeAverageRequest'
 import { ComputeAverageResponse } from './pb/calculator/ComputeAverageResponse'
+import { PrimeNumberDecompositionRequest, PrimeNumberDecompositionRequest__Output } from './pb/calculator/PrimeNumberDecompositionRequest'
+import { PrimeNumberDecompositionResponse, PrimeNumberDecompositionResponse__Output } from './pb/calculator/PrimeNumberDecompositionResponse'
 
 const PROTO_FILE = '../proto/learning.proto'
 const packageDefinition = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
@@ -63,6 +65,30 @@ function newServer() {
             })
         },
 
+        PrimeNumberDecomposition: (
+            stream: grpc.ServerWritableStream<PrimeNumberDecompositionRequest__Output, PrimeNumberDecompositionResponse>
+        ) => {
+            let number = Number(stream.request.number)
+            let divisor = 2;
+
+            console.log(number)
+
+            while (number > 1) {
+                if (number % divisor == 0) {
+                    stream.write({prime_factor: divisor})
+                    number = number / divisor
+                } else {
+                    divisor++
+                    console.log(`Divisor has increased to ${divisor}\n`)
+                }
+            }
+            stream.on('finish', () => {
+                console.log(divisor)
+                stream.write({prime_factor: divisor})
+            })
+            stream.end()
+            return
+        },
         Chat: (call: grpc.ServerDuplexStream<ChatRequest__Output, ChatResponse>) => {
             call.on(
                 "data",
