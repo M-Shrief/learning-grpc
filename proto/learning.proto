@@ -4,8 +4,11 @@ package learning;
 
 import "ping.proto";
 import "chat.proto";
+import "calculator.proto";
 
 service Learning {
     rpc PingPong(PingRequest) returns (PongResponse) {};
     rpc Chat(stream ChatRequest) returns (stream ChatResponse) {};
+    rpc ComputeAverage(stream ComputeAverageRequest) returns (ComputeAverageResponse) {};
+    rpc PrimeNumberDecomposition(PrimeNumberDecompositionRequest) returns (stream PrimeNumberDecompositionResponse) {};
 }

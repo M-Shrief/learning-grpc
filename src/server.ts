@@ -7,6 +7,8 @@ import { ChatRequest, ChatRequest__Output } from './pb/chat/ChatRequest'
 import { ChatResponse } from './pb/chat/ChatResponse'
 import { PingRequest__Output } from './pb/ping/PingRequest'
 import { PongResponse } from './pb/ping/PongResponse'
+import { ComputeAverageRequest__Output } from './pb/calculator/ComputeAverageRequest'
+import { ComputeAverageResponse } from './pb/calculator/ComputeAverageResponse'
 
 const PROTO_FILE = '../proto/learning.proto'
 const packageDefinition = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
@@ -44,6 +46,23 @@ function newServer() {
             console.log(req.request);
             res(null, {message: "Pong"})
         },
+        ComputeAverage: (
+            stream: grpc.ServerReadableStream<ComputeAverageRequest__Output, ComputeAverageResponse>,
+            res: grpc.sendUnaryData<ComputeAverageResponse>
+        ) => {
+            let sum = 0, count = 0;
+            stream.on("data", (req: ComputeAverageRequest__Output) => {
+                console.log(`Received: ${req.number}`)
+                sum += req.number
+                count++
+            })
+
+            stream.on("end", () => {
+                let average = sum / count;
+                res(null, {average})
+            })
+        },
+
         Chat: (call: grpc.ServerDuplexStream<ChatRequest__Output, ChatResponse>) => {
             call.on(
                 "data",
