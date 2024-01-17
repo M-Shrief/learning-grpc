@@ -9,7 +9,16 @@ import { PrimeNumberDecompositionResponse, PrimeNumberDecompositionResponse__Out
 const PORT = 8080
 const PROTO_FILE = '../proto/learning.proto'
 
-const packageDefinition = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
+const packageDefinition = protoLoader.loadSync(
+    path.resolve(__dirname, PROTO_FILE), 
+    {
+        keepCase: true,
+        longs: String,
+        enums: String,
+        defaults: true,
+        oneofs: true
+    }
+)
 const gRPCObj = (grpc.loadPackageDefinition(packageDefinition) as unknown) as ProtoGrpcType
 
 const client = new gRPCObj.learning.Learning(`0.0.0.0:${PORT}`, grpc.credentials.createInsecure());
@@ -42,32 +51,32 @@ function onReady() {
     // )
 
 
-    // const call = client.computeAverage((err, res) => {
-    //     if(err) {
-    //         console.error(err);
-    //         return
-    //     }+
-    //     console.log(res)
-    // })
+    const call = client.computeAverage((err, res) => {
+        if(err) {
+            console.error(err);
+            return
+        }+
+        console.log(res)
+    })
     
-    // for(let number of [1,2,3,4,5]) {
-    //     call2.write({number})
-    // }
+    for(let number of [1,2,3,4,5]) {
+        call.write({number})
+    }
 
-    // call.end()
+    call.end()
 
-    const call2 = client.primeNumberDecomposition({number: 12390392840})
+    // const call2 = client.primeNumberDecomposition({number: 12390392840})
 
-    call2
-    .on('data', (chunk: PrimeNumberDecompositionResponse__Output) => {
-        console.log(chunk)
-    })
-    .on('end', () => {
-        console.log("Communication ended successfully");
-    })
-    .on("error", (err) => {
-        console.error(err)
-    })
+    // call2
+    // .on('data', (chunk: PrimeNumberDecompositionResponse__Output) => {
+    //     console.log(chunk)
+    // })
+    // .on('end', () => {
+    //     console.log("Communication ended successfully");
+    // })
+    // .on("error", (err) => {
+    //     console.error(err)
+    // })
 
     // const rl = readline.createInterface({
     //     input: process.stdin,
